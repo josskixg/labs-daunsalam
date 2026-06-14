@@ -1,0 +1,131 @@
+# ============================================================
+# .gitignore - root repo
+# Platform Digital Evaluasi Antioksidan Daun Salam
+# ============================================================
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---------- Virtual env ----------
+.venv/
+venv/
+env/
+ENV/
+
+# ---------- Environment & secrets ----------
+.env
+.env.*
+!.env.example
+
+# Streamlit secrets (Google Sheets credentials, auth passcode)
+**/.streamlit/secrets.toml
+!**/.streamlit/secrets.toml.example
+
+# Service account JSON keys
+*.json
+!example.json
+!package.json
+!package-lock.json
+!tsconfig.json
+
+# ---------- IDE / Editor ----------
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.example.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---------- AI tooling cache (browser automation, MCP) ----------
+.playwright-mcp/
+.opencode/
+.aider*
+.claude/
+.cursor/
+
+# ---------- App runtime data ----------
+# Folder fallback CSV ketika Google Sheets belum dikonfigurasi.
+# Data riset asli sebaiknya disimpan di Google Sheets, bukan di repo.
+app/data/
+
+# Cache Streamlit
+.streamlit/cache/
+.streamlit/logs/
+
+# ---------- Generated artifacts ----------
+# PDF report yang di-generate dari app
+*.pdf
+!docs/**/*.pdf
+
+# Output folder testing
+app/tests/_test_*
+app/tests/output/
+
+# Streamlit logs (kalau ada redirect output ke file)
+*.log
+!CHANGELOG.log
+
+# ---------- Sumber data riset (jangan commit data primer) ----------
+# Data spreadsheet asli dari lab — privacy & ukuran file
+Panji.xlsx
+*Panji*.xlsx
+*Panji*.xls
+*Panji*.docx
+*Panji*.pdf
+
+# Backup spreadsheet umum
+*.bak
+*.backup
+~$*.xlsx
+~$*.docx
+
+# ---------- OS-specific ----------
+# Windows
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.AppleDouble
+.LSOverride
+Icon
+
+# Linux
+*~
+
+# ---------- Lainnya ----------
+# Node modules (kalau nanti ada tooling JS)
+node_modules/
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# ============================================================
+# Yang HARUS di-commit (override di atas):
+# - app/.streamlit/config.toml          (config aman)
+# - app/.streamlit/secrets.toml.example (template)
+# - template_gsheet.xlsx                (template GSheet, generic)
+# - docs/                               (dokumentasi)
+# - .github/workflows/                  (CI keep-alive)
+# ============================================================

@@ -1,0 +1,36 @@
+# ========================================================================
+# STREAMLIT CONFIG
+# Tema, performance, responsive defaults
+# ========================================================================
+
+[theme]
+base = "light"
+primaryColor = "#2E7D32"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F1F8E9"
+textColor = "#1B5E20"
+font = "sans serif"
+
+[server]
+headless = true
+runOnSave = false
+fileWatcherType = "none"
+enableXsrfProtection = true
+maxUploadSize = 50
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = true
+showSidebarNavigation = true
+
+[runner]
+fastReruns = true
+
+[logger]
+level = "warning"
+
+[global]
+disableWidgetStateDuplicationWarning = true
