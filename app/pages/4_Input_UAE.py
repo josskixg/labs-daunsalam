@@ -1,5 +1,5 @@
 """
-Placeholder: input parameter ekstraksi UAE (Ultrasound-Assisted Extraction).
+Input parameter ekstraksi UAE (Ultrasound-Assisted Extraction).
 Skema kolom sudah disiapkan di utils/sheets.py UAE_COLUMNS.
 """
 
@@ -20,14 +20,33 @@ page_header(
 auth.login_widget()
 auth.logout_widget()
 
+# ---------- Pelarut (di luar form agar conditional text_input muncul live) ----------
+# Gunakan kolom tunggal agar selectbox + text_input tidak terpotong
+_pelarut_pilihan = st.selectbox(
+    "Jenis pelarut",
+    ["Metanol", "Etanol 70%", "Etanol 96%", "Air", "Lainnya..."],
+    key="pelarut_pilihan",
+)
+if _pelarut_pilihan == "Lainnya...":
+    _pelarut_custom = st.text_input(
+        "Tulis jenis pelarut",
+        placeholder="mis. Aseton 50%",
+        key="pelarut_custom",
+    )
+else:
+    _pelarut_custom = ""
+
+# Nilai final pelarut yang akan disimpan
+_pelarut_final = (
+    _pelarut_custom if _pelarut_pilihan == "Lainnya..." else _pelarut_pilihan
+)
+
+# ---------- Form ----------
 with st.form("uae"):
-    c1, c2, c3 = st.columns(3)
+    c1, c2, _ = st.columns(3)
     tanggal = c1.date_input("Tanggal", date.today())
     kode = c2.text_input("Kode sampel", "UAE-001")
-    pelarut = c3.selectbox(
-        "Jenis pelarut",
-        ["Metanol", "Etanol 70%", "Etanol 96%", "Air"],
-    )
+    # kolom ketiga sengaja kosong — sudah diisi selectbox pelarut di atas
 
     c4, c5, c6 = st.columns(3)
     massa = c4.number_input("Massa simplisia (g)", value=10.0, min_value=0.0, step=0.1)
@@ -56,6 +75,13 @@ with st.form("uae"):
         disabled=not can_save,
     )
     if submitted and can_save:
+        # Baca nilai pelarut dari session_state saat submit
+        _pilihan = st.session_state.get("pelarut_pilihan", "Metanol")
+        pelarut = (
+            st.session_state.get("pelarut_custom", "")
+            if _pilihan == "Lainnya..."
+            else _pilihan
+        )
         rendemen = (massa_eks / massa * 100) if massa > 0 else 0.0
         row = pd.DataFrame(
             [

@@ -25,11 +25,15 @@ with st.container(border=True):
     m1, m2, m3 = st.columns(3)
     tanggal = m1.date_input("Tanggal", value=date.today())
     sampel = m2.text_input("Sampel", value="Daun Salam Ekstrak Etanol")
-    metode = m3.selectbox(
+    _metode_pilihan = m3.selectbox(
         "Metode ekstraksi",
-        ["UAE", "Maserasi", "Soxhlet", "MAE", "Lainnya"],
+        ["UAE", "Maserasi", "Soxhlet", "MAE", "Lainnya..."],
         index=0,
     )
+    if _metode_pilihan == "Lainnya...":
+        metode = m3.text_input("Tulis metode ekstraksi", placeholder="mis. PLE, SFE")
+    else:
+        metode = _metode_pilihan
     waktu_inkubasi = st.select_slider(
         "Waktu inkubasi (menit)",
         options=[5, 6, 7, 8, 9, 10, 15, 20, 30],
