@@ -12,19 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Ping app
-        env:
-          APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
+      - name: Ping Streamlit app
         run: |
-          if [ -z "$APP_URL" ]; then
-            echo "::warning::Set repo secret STREAMLIT_APP_URL ke URL public app lo."
-            echo "Contoh: https://daun-salam-antioksidan.streamlit.app"
-            exit 0
-          fi
-          python app/keep_alive.py "$APP_URL"
+          echo "Pinging https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH ..."
+          curl -sSL --max-time 60 --retry 3 --retry-delay 10 \
+            -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" \
+            "https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH"
+          echo "Done."

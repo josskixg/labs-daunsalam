@@ -26,7 +26,7 @@ with st.form("uae"):
     kode = c2.text_input("Kode sampel", "UAE-001")
     pelarut = c3.selectbox(
         "Jenis pelarut",
-        ["Etanol 70%", "Etanol 96%", "Metanol", "Air"],
+        ["Metanol", "Etanol 70%", "Etanol 96%", "Air"],
     )
 
     c4, c5, c6 = st.columns(3)

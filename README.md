@@ -3,20 +3,24 @@
 
 # Platform Digital Evaluasi Antioksidan Daun Salam
 
-**Aplikasi Streamlit untuk input, perhitungan otomatis, analisis statistik,**
-**dan visualisasi uji aktivitas antioksidan metode DPPH**
-**dengan backend Google Sheets.**
+**Ekstraksi Berwawasan Lingkungan Daun Salam dengan Metode UAE**
+**dan Evaluasi Potensi Antioksidan dalam Platform Digital**
 
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs)](https://nextjs.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Recharts](https://img.shields.io/badge/Charts-Recharts-22B5BF)](https://recharts.org/)
+[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/)
+
+**[Streamlit Lawas]**
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.36%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Google Sheets](https://img.shields.io/badge/Backend-Google%20Sheets-34A853?logo=googlesheets&logoColor=white)](https://www.google.com/sheets/about/)
-[![Plotly](https://img.shields.io/badge/Charts-Plotly-3F4F75?logo=plotly&logoColor=white)](https://plotly.com/python/)
-[![ReportLab](https://img.shields.io/badge/PDF-ReportLab-CC0000)](https://www.reportlab.com/)
-[![License](https://img.shields.io/badge/License-Academic-blue)](#)
 
-[**Mulai Cepat**](#mulai-cepat) ·
-[**Setup Google Sheets**](#setup-google-sheets) ·
-[**Fitur**](#fitur-utama) ·
+[**Pilih Stack**](#pilih-stack) ·
+[**Dashboard Next.js**](#stack-utama-dashboard-nextjs--supabase) ·
+[**Streamlit + GSheet**](#stack-lawas-streamlit--google-sheets) ·
 [**Diagram**](docs/DIAGRAMS.md) ·
 [**Panduan Pengguna**](PANDUAN.md)
 
@@ -27,10 +31,19 @@
 ## Pengantar
 
 Platform digital untuk mengelola, menganalisis, dan melaporkan hasil
-pengujian aktivitas antioksidan metode **DPPH** (1,1-diphenyl-2-picrylhydrazyl).
-Dirancang khusus untuk skenario riset skala laboratorium dengan data tabular
-yang relatif kecil sehingga **Google Sheets** menjadi pilihan backend yang
-ideal: gratis, multi-device, dan dapat diaudit langsung di browser.
+penelitian ekstraksi daun salam (UAE) dan pengujian aktivitas antioksidan
+metode **DPPH** beserta modul pendukung (TPC, fitokimia, monitoring sensor,
+ANOVA, model prediksi).
+
+Repo ini menyediakan **dua stack** untuk audience & use case berbeda:
+
+| Stack | Audience | Use Case | Status |
+|---|---|---|---|
+| **Dashboard Next.js + Supabase** | Sidang/showcase, multi-modul lengkap, demo platform | Admin panel professional, real-time, scalable Postgres | ⭐ **Utama** |
+| **Streamlit + Google Sheets** | Asisten lab, input cepat, low-friction | Tool harian: input absorbansi, hitung IC50, generate PDF | Maintenance |
+
+Keduanya bisa **berjalan paralel** — pakai Streamlit buat input data
+research di lab, dashboard Next.js untuk visualisasi & demo sidang.
 
 ### Mengapa Platform Ini
 
@@ -47,24 +60,206 @@ ideal: gratis, multi-device, dan dapat diaudit langsung di browser.
 
 ## Daftar Isi
 
-1. [Fitur Utama](#fitur-utama)
-2. [Mulai Cepat](#mulai-cepat)
-3. [Setup Google Sheets](#setup-google-sheets)
-4. [Auth Login](#auth-login)
-5. [Modul ANOVA + Tukey HSD](#modul-anova--tukey-hsd)
-6. [Export PDF Report](#export-pdf-report)
-7. [Deploy ke Streamlit Community Cloud](#deploy-ke-streamlit-community-cloud)
-8. [Anti Cold-Start](#anti-cold-start)
-9. [Responsive (Mobile-Friendly)](#responsive-mobile-friendly)
-10. [Rumus & Validasi Saintifik](#rumus--validasi-saintifik)
-11. [Struktur Folder](#struktur-folder)
-12. [Diagram & Visual Reference](docs/DIAGRAMS.md)
-13. [Troubleshooting](#troubleshooting)
-14. [Roadmap](#roadmap)
+1. [Pilih Stack](#pilih-stack)
+2. [Stack Utama: Dashboard Next.js + Supabase](#stack-utama-dashboard-nextjs--supabase)
+3. [Stack Lawas: Streamlit + Google Sheets](#stack-lawas-streamlit--google-sheets)
+4. [Fitur Streamlit](#fitur-streamlit)
+5. [Mulai Cepat (Streamlit)](#mulai-cepat-streamlit)
+6. [Setup Google Sheets](#setup-google-sheets)
+7. [Auth Login](#auth-login)
+8. [Modul ANOVA + Tukey HSD](#modul-anova--tukey-hsd)
+9. [Export PDF Report](#export-pdf-report)
+10. [Deploy Streamlit Cloud](#deploy-ke-streamlit-community-cloud)
+11. [Anti Cold-Start](#anti-cold-start)
+12. [Responsive (Mobile-Friendly)](#responsive-mobile-friendly)
+13. [Rumus & Validasi Saintifik](#rumus--validasi-saintifik)
+14. [Struktur Folder Repo](#struktur-folder-repo)
+15. [Diagram & Visual Reference](docs/DIAGRAMS.md)
+16. [Troubleshooting](#troubleshooting)
+17. [Roadmap](#roadmap)
 
 ---
 
-## Fitur Utama
+## Pilih Stack
+
+Lo bingung mau pakai yang mana? Ikuti tabel keputusan ini:
+
+| Pertanyaan | Jawab YES → Pakai | Jawab NO |
+|---|---|---|
+| Mau visual professional kayak admin panel SaaS? | **Dashboard Next.js** | lanjut |
+| Butuh modul lengkap (sensor, ML, fitokimia, environment)? | **Dashboard Next.js** | lanjut |
+| Butuh database SQL beneran (relasi, query kompleks)? | **Dashboard Next.js** | lanjut |
+| Mau showcase platform di sidang/jurnal? | **Dashboard Next.js** | lanjut |
+| Cuma butuh input absorbansi & hitung IC50 cepat? | **Streamlit** | lanjut |
+| Asisten lab gak familiar dengan Vercel/Supabase? | **Streamlit** | lanjut |
+| Pakai Google Sheets sebagai dokumentasi tesis? | **Streamlit** | — |
+
+> **Rekomendasi default**: pakai **Dashboard Next.js** sebagai produk utama,
+> Streamlit sebagai tool internal lab.
+
+```mermaid
+flowchart LR
+    Lab[Lab: pengukuran absorbansi DPPH] --> S[Streamlit + GSheet<br/>quick input]
+    Lab --> D[Dashboard Next.js + Supabase<br/>showcase, analisis lengkap]
+    S -.-> Sheets[(Google Sheets)]
+    D -.-> Postgres[(Supabase Postgres)]
+
+    style D fill:#34A853,color:#fff
+    style S fill:#FF4B4B,color:#fff
+```
+
+---
+
+## Stack Utama: Dashboard Next.js + Supabase
+
+Modern admin panel dengan **10 komponen visual** match mockup professional:
+KPI cards, monitoring real-time, donut fitokimia, scatter model prediksi,
+timeline notifikasi, dll. Backend Postgres via Supabase, deploy gratis ke
+Vercel.
+
+### Tech Stack
+
+| Layer | Tool |
+|---|---|
+| **Framework** | Next.js 15 (App Router) + React 19 + TypeScript |
+| **Styling** | Tailwind CSS 3 + shadcn/ui (Card, Badge, Button, Separator) |
+| **Charts** | Recharts (line, bar, pie/donut, scatter, composed) |
+| **Database** | Supabase (Postgres) — 10 tabel + 2 views |
+| **Icons** | Lucide React |
+| **Deploy** | Vercel (gratis, auto-deploy on git push) |
+
+### Quick Start (3 menit)
+
+```bash
+cd dashboard
+npm install
+cp .env.example .env.local
+# Isi .env.local dengan Supabase URL + anon key
+npm run dev
+# Buka http://localhost:3000
+```
+
+### Halaman Yang Sudah Jadi
+
+```mermaid
+graph LR
+    Home[Dashboard<br/>5 KPI + 4 chart + 4 panel]
+    Home --> DPPH[/dpph<br/>Card grid percobaan]
+    Home --> UAE[/uae<br/>Tabel sesi ekstraksi]
+    Home --> Fito[/fitokimia<br/>Donut komposisi]
+    Home --> Model[/model<br/>Metrik R2/RMSE/MAE]
+    Home --> TPC[/tpc<br/>Coming soon]
+    Home --> Data[/dataset<br/>Coming soon]
+    Home --> Lap[/laporan<br/>Coming soon]
+```
+
+### Database Schema (10 tabel + 2 views)
+
+| Tabel | Fungsi |
+|---|---|
+| `samples` | Master sampel daun salam |
+| `uae_sessions` | Sesi ekstraksi UAE + parameter proses |
+| `monitoring_logs` | Log sensor real-time per sesi (suhu/pH/amplitudo/daya) |
+| `dpph_experiments` | Header percobaan DPPH |
+| `dpph_measurements` | Detail absorbansi per konsentrasi (long-format) |
+| `tpc_measurements` | Total Phenolic Content (Folin-Ciocalteu) |
+| `phytochemistry` | Komposisi fitokimia ekstrak |
+| `model_predictions` | Output regresi/ML (R²/RMSE/MAE/MSE) |
+| `environmental_impact` | Konsumsi energi, emisi CO₂, green chemistry score |
+| `activity_log` | Audit trail aktivitas sistem |
+| `v_dashboard_kpi` (view) | Agregat 5 KPI cards |
+| `v_riwayat_ekstraksi` (view) | Tabel riwayat dengan join DPPH |
+
+### Setup Supabase (5 menit)
+
+1. Daftar di <https://supabase.com> → **New project** (region Singapore terdekat)
+2. Tunggu provisioning ~2 menit
+3. Tab **SQL Editor** → paste isi `dashboard/supabase/migrations/001_initial_schema.sql` → **Run**
+4. New query → paste `dashboard/supabase/migrations/002_seed_data.sql` → **Run** (data demo)
+5. Tab **Settings → API** → copy URL + anon key → paste ke `dashboard/.env.local`
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Deploy ke Vercel
+
+```bash
+cd dashboard
+npm i -g vercel
+vercel              # ikuti prompt: root = current dir
+# Add env vars di Vercel dashboard:
+#   NEXT_PUBLIC_SUPABASE_URL
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY
+#   SUPABASE_SERVICE_ROLE_KEY
+vercel --prod       # promote ke production
+```
+
+Live URL: `https://your-app.vercel.app`. Auto-redeploy setiap `git push`
+ke main branch.
+
+### Struktur Dashboard
+
+```text
+dashboard/
+├── app/
+│   ├── layout.tsx                # Root HTML
+│   ├── globals.css               # Tailwind + theme variables
+│   └── (dashboard)/              # Route group (sidebar layout)
+│       ├── layout.tsx            # Shell: Sidebar + Topbar + Footer
+│       ├── page.tsx              # Dashboard utama match mockup
+│       ├── dpph/page.tsx         # Aktivitas Antioksidan
+│       ├── uae/page.tsx          # Parameter Proses
+│       ├── fitokimia/page.tsx    # Komposisi Fitokimia
+│       ├── tpc/page.tsx          # Total Fenolik
+│       ├── dataset/page.tsx      # Manajemen dataset
+│       ├── model/page.tsx        # Model prediksi
+│       └── laporan/page.tsx      # Laporan hasil
+├── components/
+│   ├── ui/                       # shadcn primitives (4 file)
+│   ├── layout/                   # Sidebar, Topbar, StatusPanel
+│   └── dashboard/                # 8 komponen dashboard match mockup
+├── lib/
+│   ├── utils.ts                  # cn(), formatNumber, classifyIC50
+│   └── supabase/                 # client.ts + server.ts
+├── types/database.ts             # TypeScript types semua tabel
+├── supabase/migrations/          # Schema SQL + seed data
+├── package.json
+├── tailwind.config.ts
+└── README.md                     # Setup detail dashboard
+```
+
+Detail lengkap: **[dashboard/README.md](dashboard/README.md)**.
+
+---
+
+## Stack Lawas: Streamlit + Google Sheets
+
+Versi original yang dibuat duluan. Cocok untuk skenario **input data
+harian di lab** dengan friction rendah — tidak perlu install Node.js,
+gak perlu kelola database, semua data ke Google Sheets.
+
+### Mengapa Stack Streamlit Masih Relevan
+
+| Tantangan Riset | Solusi Streamlit |
+|---|---|
+| Hitungan manual % inhibisi & IC50 di Excel rawan typo | Input mentah → otomatis hitung dengan rumus tervalidasi |
+| Replikasi data antar laptop & lab | Google Sheets sebagai single source of truth |
+| Pembimbing minta uji beda nyata (ANOVA + Tukey) | Modul terintegrasi dengan interpretasi otomatis |
+| Lampiran tesis butuh laporan rapi per percobaan | Generator PDF satu klik |
+| Akses dari HP saat di lab | Layout responsif, sidebar otomatis collapse |
+| Streamlit Cloud auto-sleep setelah 7 hari | GitHub Actions ping setiap 6 jam |
+| Asisten lab gak nyaman buka admin panel kompleks | UI sederhana: form, tabel, chart |
+
+> **Note:** Streamlit & Dashboard Next.js bisa **berjalan paralel**.
+> Data Google Sheets bisa di-export dan di-import ke Supabase kapan saja
+> dengan SQL `INSERT INTO` atau via Supabase CSV import.
+
+---
+
+## Fitur Streamlit
 
 | Modul | Deskripsi |
 |---|---|
@@ -83,7 +278,7 @@ ideal: gratis, multi-device, dan dapat diaudit langsung di browser.
 
 ---
 
-## Mulai Cepat
+## Mulai Cepat (Streamlit)
 
 ```powershell
 # Clone & masuk folder app
@@ -499,45 +694,92 @@ python app\tests\verify_with_excel.py
 
 ---
 
-## Struktur Folder
+## Struktur Folder Repo
+
+Repo ini berisi **2 stack paralel** plus dokumentasi & template.
 
 ```text
 .
-├── app/
-│   ├── Home.py                      # Landing + dashboard
+├── dashboard/                          # ⭐ STACK UTAMA: Next.js + Supabase
+│   ├── app/                            # Next.js App Router
+│   │   ├── globals.css
+│   │   ├── layout.tsx                  # Root HTML
+│   │   └── (dashboard)/                # Route group dengan sidebar
+│   │       ├── layout.tsx              # Shell (Sidebar + Topbar)
+│   │       ├── page.tsx                # Dashboard utama match mockup
+│   │       ├── dpph/page.tsx
+│   │       ├── uae/page.tsx
+│   │       ├── fitokimia/page.tsx
+│   │       ├── tpc/page.tsx
+│   │       ├── dataset/page.tsx
+│   │       ├── model/page.tsx
+│   │       └── laporan/page.tsx
+│   ├── components/
+│   │   ├── ui/                         # shadcn primitives
+│   │   ├── layout/                     # Sidebar, Topbar, StatusPanel
+│   │   └── dashboard/                  # 8 komponen dashboard
+│   ├── lib/
+│   │   ├── utils.ts
+│   │   └── supabase/                   # client.ts + server.ts
+│   ├── types/database.ts
+│   ├── supabase/migrations/
+│   │   ├── 001_initial_schema.sql      # 10 tabel + 2 views + RLS
+│   │   └── 002_seed_data.sql           # Data demo realistic
+│   ├── package.json
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
+│   ├── components.json
+│   ├── .env.example
+│   └── README.md                       # Setup detail dashboard
+│
+├── app/                                # STACK LAWAS: Streamlit + GSheet
+│   ├── Home.py                         # Landing + dashboard
 │   ├── pages/
 │   │   ├── 1_Input_DPPH.py
-│   │   ├── 2_Visualisasi_DPPH.py    # + tombol export PDF
+│   │   ├── 2_Visualisasi_DPPH.py       # + tombol export PDF
 │   │   ├── 3_Riwayat_Data.py
 │   │   ├── 4_Input_UAE.py
 │   │   ├── 5_Input_TPC.py
 │   │   └── 6_Analisis_ANOVA.py
 │   ├── utils/
-│   │   ├── calculations.py          # %inhibisi, regresi, IC50, ANOVA, Tukey
-│   │   ├── sheets.py                # Wrapper Google Sheets
-│   │   ├── local_store.py           # Wrapper CSV (fallback)
-│   │   ├── storage.py               # Facade auto-pilih backend
-│   │   ├── cache.py                 # @st.cache_data layer
-│   │   ├── ui.py                    # Responsive CSS + page setup
-│   │   ├── auth.py                  # Passcode auth gate
-│   │   └── pdf_report.py            # Generator PDF
+│   │   ├── calculations.py             # %inhibisi, regresi, IC50, ANOVA
+│   │   ├── sheets.py                   # Wrapper Google Sheets
+│   │   ├── local_store.py              # Wrapper CSV (fallback)
+│   │   ├── storage.py                  # Facade auto-pilih backend
+│   │   ├── cache.py                    # @st.cache_data layer
+│   │   ├── ui.py                       # Responsive CSS
+│   │   ├── auth.py                     # Passcode gate
+│   │   └── pdf_report.py               # Generator PDF
 │   ├── tests/
-│   │   ├── verify_with_excel.py     # Validasi calc vs data referensi
-│   │   └── build_template.py        # Generate template_gsheet.xlsx
-│   ├── data/                        # Auto-created CSV fallback
+│   │   ├── verify_with_excel.py
+│   │   ├── build_template.py
+│   │   └── setup_gsheets.py
 │   ├── .streamlit/
 │   │   ├── config.toml
 │   │   └── secrets.toml.example
 │   ├── keep_alive.py
 │   └── requirements.txt
+│
 ├── .github/workflows/
-│   └── keep-alive.yml
+│   └── keep-alive.yml                  # Cron 6 jam (Streamlit Cloud)
+│
 ├── docs/
-│   └── DIAGRAMS.md                  # 10 diagram Mermaid
-├── template_gsheet.xlsx             # Template upload Google Sheets
-├── PANDUAN.md                       # Panduan untuk orang awam
-└── README.md                        # File ini
+│   └── DIAGRAMS.md                     # 10 diagram Mermaid
+│
+├── template_gsheet.xlsx                # Template upload Google Sheets (Streamlit)
+├── PANDUAN.md                          # Panduan orang awam
+└── README.md                           # File ini
 ```
+
+### Quick Reference Tiap Folder
+
+| Folder | Untuk siapa | Setup |
+|---|---|---|
+| `dashboard/` | Mau pakai Next.js + Supabase | [dashboard/README.md](dashboard/README.md) |
+| `app/` | Mau pakai Streamlit + GSheet | [Quick Start Streamlit](#mulai-cepat-streamlit) |
+| `docs/` | Lihat diagram alur | [docs/DIAGRAMS.md](docs/DIAGRAMS.md) |
+| `template_gsheet.xlsx` | Setup Google Sheet | [Setup Google Sheets](#setup-google-sheets) |
+| `PANDUAN.md` | Panduan untuk orang awam | [PANDUAN.md](PANDUAN.md) |
 
 ---
 
@@ -620,17 +862,31 @@ python app\tests\verify_with_excel.py
 gantt
     title Roadmap Pengembangan
     dateFormat YYYY-MM-DD
-    section MVP (Done)
-    DPPH + Hybrid storage     :done, 2026-01-01, 2026-01-15
-    ANOVA + PDF + Auth        :done, 2026-01-13, 2026-01-15
-    section Fase 2
-    Modul UAE lengkap (RSM)   :2026-02-01, 30d
-    Modul TPC lengkap         :2026-02-15, 30d
-    Import Excel batch        :2026-03-01, 14d
+
+    section Streamlit MVP (Done)
+    DPPH + Hybrid storage      :done, 2026-01-01, 2026-01-15
+    ANOVA + PDF + Auth         :done, 2026-01-13, 2026-01-15
+
+    section Dashboard Next.js (Done)
+    Schema Supabase + seed     :done, 2026-01-16, 2026-01-17
+    Layout shell + 8 komponen  :done, 2026-01-17, 2026-01-18
+    Halaman utama match mockup :done, 2026-01-18, 2026-01-19
+
+    section Fase 2 (Aktif)
+    CRUD form input dashboard  :active, 2026-02-01, 21d
+    Auth Supabase + RLS policy :2026-02-15, 14d
+    Realtime sensor monitoring :2026-03-01, 21d
+
     section Fase 3
-    Multi-user + role         :2026-03-15, 21d
-    Audit trail               :2026-04-01, 14d
-    Dashboard publik          :2026-04-15, 14d
+    Modul UAE optimasi (RSM)   :2026-03-15, 30d
+    Modul TPC lengkap          :2026-04-01, 30d
+    Multi-user + role          :2026-04-15, 21d
+
+    section Fase 4
+    Export PDF dari dashboard  :2026-05-01, 14d
+    ANOVA page di dashboard    :2026-05-10, 14d
+    Audit trail UI             :2026-05-20, 14d
+    Dashboard publik (read-only) :2026-06-01, 14d
 ```
 
 ---
@@ -640,14 +896,28 @@ gantt
 Platform akademik untuk keperluan tesis Magister Studi Lingkungan UNTIRTA.
 Library third-party tunduk pada lisensi masing-masing.
 
-**Stack utama:**
+### Stack Dashboard Next.js
+
+[Next.js](https://nextjs.org/) ·
+[React](https://react.dev/) ·
+[TypeScript](https://www.typescriptlang.org/) ·
+[Tailwind CSS](https://tailwindcss.com/) ·
+[shadcn/ui](https://ui.shadcn.com/) ·
+[Recharts](https://recharts.org/) ·
+[Supabase](https://supabase.com/) ·
+[Lucide Icons](https://lucide.dev/) ·
+[Vercel](https://vercel.com/)
+
+### Stack Streamlit
+
 [Streamlit](https://streamlit.io/) ·
 [pandas](https://pandas.pydata.org/) ·
 [scipy](https://scipy.org/) ·
 [statsmodels](https://www.statsmodels.org/) ·
 [Plotly](https://plotly.com/python/) ·
 [ReportLab](https://www.reportlab.com/) ·
-[gspread](https://docs.gspread.org/) via [streamlit-gsheets-connection](https://github.com/streamlit/gsheets-connection)
+[gspread](https://docs.gspread.org/) via
+[streamlit-gsheets-connection](https://github.com/streamlit/gsheets-connection)
 
 ---
 
@@ -655,7 +925,8 @@ Library third-party tunduk pada lisensi masing-masing.
 
 **Made for Magister Studi Lingkungan, Pascasarjana UNTIRTA**
 
-[Mulai Cepat](#mulai-cepat) ·
+[Dashboard](dashboard/README.md) ·
+[Streamlit Quick Start](#mulai-cepat-streamlit) ·
 [Diagram](docs/DIAGRAMS.md) ·
 [Panduan Awam](PANDUAN.md)
 

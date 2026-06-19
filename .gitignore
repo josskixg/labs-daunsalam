@@ -116,6 +116,22 @@ Icon
 # Node modules (kalau nanti ada tooling JS)
 node_modules/
 
+# ---------- Dashboard Next.js (separate deployment, jangan commit di sini) ----------
+dashboard/
+
+# ---------- Generated / local artifacts ----------
+# Output folder generated docs
+output/
+
+# Dokumen Word lokal (draft, panduan, bukan bagian app)
+BAB3_METODE_PENELITIAN.docx
+PANDUAN_STREAMLIT.docx
+*.docx
+!template_gsheet.xlsx
+
+# Screenshots generated (bisa di-regenerate)
+docs/screenshots/
+
 # Temporary
 tmp/
 temp/
