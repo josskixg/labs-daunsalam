@@ -15,7 +15,7 @@ jobs:
       - name: Ping Streamlit app
         run: |
           echo "Pinging https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH ..."
-          curl -sSL --max-time 60 --retry 3 --retry-delay 10 \
+          curl -s --max-time 60 --max-redirs 0 \
             -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" \
-            "https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH"
+            "https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH" || true
           echo "Done."
