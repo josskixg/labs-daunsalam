@@ -1,7 +1,7 @@
 name: Keep Streamlit App Warm
 
 # Ping app setiap 6 jam supaya Streamlit Cloud tidak men-sleep instance.
-# Streamlit Cloud auto-sleep app setelah ~7 hari tidak ada traffic.
+# Jika app sedang sleep, workflow akan otomatis klik tombol wake-up.
 on:
   schedule:
     - cron: "0 */6 * * *"   # tiap 6 jam (UTC)
@@ -10,12 +10,46 @@ on:
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - name: Ping Streamlit app
+      - name: Install Playwright
         run: |
-          echo "Pinging https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH ..."
-          curl -s --max-time 60 --max-redirs 0 \
-            -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" \
-            "https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH" || true
-          echo "Done."
+          pip install playwright --quiet
+          playwright install chromium --with-deps --quiet
+
+      - name: Wake up Streamlit app
+        run: |
+          python - <<'EOF'
+          import sys
+          from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
+
+          APP_URL = "https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH"
+          WAKE_BTN = "text=Yes, get this app back up!"
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              page = browser.new_page()
+
+              print(f"Navigating to {APP_URL} ...")
+              page.goto(APP_URL, wait_until="domcontentloaded", timeout=60000)
+
+              try:
+                  # Cek apakah tombol wake-up ada (max tunggu 5 detik)
+                  page.wait_for_selector(WAKE_BTN, timeout=5000)
+                  print("App is sleeping. Clicking wake-up button...")
+                  page.click(WAKE_BTN)
+
+                  # Tunggu app selesai loading (max 5 menit)
+                  page.wait_for_function(
+                      "document.title !== 'Streamlit'",
+                      timeout=300000,
+                  )
+                  print(f"App is awake! Title: {page.title()}")
+
+              except PWTimeout:
+                  # Tombol tidak ditemukan → app sudah hidup
+                  print(f"App is already running. Title: {page.title()}")
+
+              browser.close()
+              sys.exit(0)
+          EOF
