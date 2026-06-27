@@ -1,7 +1,7 @@
 name: Keep Streamlit App Warm
 
 # Ping app setiap 6 jam supaya Streamlit Cloud tidak men-sleep instance.
-# Jika app sedang sleep, workflow akan otomatis klik tombol wake-up.
+# Jika app sedang sleep, workflow otomatis POST wake request via curl.
 on:
   schedule:
     - cron: "0 */6 * * *"   # tiap 6 jam (UTC)
@@ -12,44 +12,52 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Install Playwright
+      - name: Wake up Streamlit app (curl)
         run: |
-          pip install playwright --quiet
-          playwright install chromium --with-deps --quiet
+          APP_URL="https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH"
+          BASE_URL="https://labs-daunsalam-ok.streamlit.app"
+          COOKIE_JAR="/tmp/sc_cookies.txt"
 
-      - name: Wake up Streamlit app
-        run: |
-          python - <<'EOF'
-          import sys
-          from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
+          for i in $(seq 1 30); do
+            BODY=$(curl -sL -c "$COOKIE_JAR" -b "$COOKIE_JAR" "$APP_URL")
 
-          APP_URL = "https://labs-daunsalam-ok.streamlit.app/Visualisasi_DPPH"
-          WAKE_BTN = "text=Yes, get this app back up!"
+            if echo "$BODY" | grep -qi "get this app back up"; then
+              echo "[Attempt $i] App is sleeping. Waking up..."
 
-          with sync_playwright() as p:
-              browser = p.chromium.launch(headless=True)
-              page = browser.new_page()
+              # Extract form action from sleep page (e.g. action="/_stcore/wake")
+              WAKE_PATH=$(echo "$BODY" | grep -oi 'action="[^"]*"' | head -1 | sed 's/action="//;s/"//')
 
-              print(f"Navigating to {APP_URL} ...")
-              page.goto(APP_URL, wait_until="domcontentloaded", timeout=60000)
+              if [ -z "$WAKE_PATH" ]; then
+                WAKE_URL="$APP_URL"
+              elif [[ "$WAKE_PATH" == http* ]]; then
+                WAKE_URL="$WAKE_PATH"
+              else
+                WAKE_URL="${BASE_URL}${WAKE_PATH}"
+              fi
 
-              try:
-                  # Cek apakah tombol wake-up ada (max tunggu 5 detik)
-                  page.wait_for_selector(WAKE_BTN, timeout=5000)
-                  print("App is sleeping. Clicking wake-up button...")
-                  page.click(WAKE_BTN)
+              echo "  Wake URL: $WAKE_URL"
 
-                  # Tunggu app selesai loading (max 5 menit)
-                  page.wait_for_function(
-                      "document.title !== 'Streamlit'",
-                      timeout=300000,
-                  )
-                  print(f"App is awake! Title: {page.title()}")
+              # Extract CSRF token from cookies if available
+              CSRF=$(grep "_streamlit_csrf" "$COOKIE_JAR" 2>/dev/null | tail -1 | awk '{print $NF}')
 
-              except PWTimeout:
-                  # Tombol tidak ditemukan → app sudah hidup
-                  print(f"App is already running. Title: {page.title()}")
+              # Send wake POST with cookies and CSRF
+              curl -sL -b "$COOKIE_JAR" -c "$COOKIE_JAR" \
+                -H "Origin: $BASE_URL" \
+                -H "Referer: $APP_URL" \
+                ${CSRF:+-H "x-csrf-token: $CSRF"} \
+                -X POST "$WAKE_URL" -d "" -o /dev/null
 
-              browser.close()
-              sys.exit(0)
-          EOF
+              echo "  Waiting 15s for app to resume..."
+              sleep 15
+            else
+              echo "App is awake! (attempt $i)"
+              if echo "$BODY" | grep -qi "<title>"; then
+                TITLE=$(echo "$BODY" | grep -oi '<title>[^<]*</title>')
+                echo "  $TITLE"
+              fi
+              exit 0
+            fi
+          done
+
+          echo "Timeout: app did not wake after 30 attempts"
+          exit 1
