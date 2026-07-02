@@ -4,24 +4,14 @@
 # Platform Digital Evaluasi Antioksidan Daun Salam
 
 **Ekstraksi Berwawasan Lingkungan Daun Salam dengan Metode UAE**
-**dan Evaluasi Potensi Antioksidan dalam Platform Digital**
+**dan Evaluasi Potensi Antioksidan dalam Platform Digital (Streamlit)**
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs)](https://nextjs.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Recharts](https://img.shields.io/badge/Charts-Recharts-22B5BF)](https://recharts.org/)
-[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/)
-
-**[Streamlit Lawas]**
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.36%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Google Sheets](https://img.shields.io/badge/Backend-Google%20Sheets-34A853?logo=googlesheets&logoColor=white)](https://www.google.com/sheets/about/)
 
-[**Pilih Stack**](#pilih-stack) ·
-[**Dashboard Next.js**](#stack-utama-dashboard-nextjs--supabase) ·
-[**Streamlit + GSheet**](#stack-lawas-streamlit--google-sheets) ·
-[**Diagram**](docs/DIAGRAMS.md) ·
+[**Streamlit Quick Start**](#mulai-cepat-streamlit) ·
+[**Setup Google Sheets**](#setup-google-sheets) ·
 [**Panduan Pengguna**](PANDUAN.md)
 
 </div>
@@ -30,26 +20,13 @@
 
 ## Pengantar
 
-Platform digital untuk mengelola, menganalisis, dan melaporkan hasil
-penelitian ekstraksi daun salam (UAE) dan pengujian aktivitas antioksidan
-metode **DPPH** beserta modul pendukung (TPC, fitokimia, monitoring sensor,
-ANOVA, model prediksi).
-
-Repo ini menyediakan **dua stack** untuk audience & use case berbeda:
-
-| Stack | Audience | Use Case | Status |
-|---|---|---|---|
-| **Dashboard Next.js + Supabase** | Sidang/showcase, multi-modul lengkap, demo platform | Admin panel professional, real-time, scalable Postgres | ⭐ **Utama** |
-| **Streamlit + Google Sheets** | Asisten lab, input cepat, low-friction | Tool harian: input absorbansi, hitung IC50, generate PDF | Maintenance |
-
-Keduanya bisa **berjalan paralel** — pakai Streamlit buat input data
-research di lab, dashboard Next.js untuk visualisasi & demo sidang.
+Repo ini berfokus pada aplikasi Streamlit untuk membantu penelitian ekstraksi daun salam (UAE) dan pengujian aktivitas antioksidan metode **DPPH**. Aplikasi menyediakan fitur input cepat, perhitungan % inhibisi & IC50, visualisasi, analisis statistik (ANOVA + Tukey), dan generator laporan PDF. Backend primernya adalah Google Sheets (hybrid storage: Google Sheets atau fallback CSV lokal).
 
 ### Mengapa Platform Ini
 
-| Tantangan Riset | Solusi Platform |
+| Tantangan Riset | Solusi Streamlit |
 |---|---|
-| Hitungan manual % inhibisi & IC50 dari Excel rawan typo | Input mentah → otomatis hitung dengan rumus tervalidasi |
+| Hitungan manual % inhibisi & IC50 di Excel rawan typo | Input mentah → otomatis hitung dengan rumus tervalidasi |
 | Replikasi data antar laptop & lab | Google Sheets sebagai single source of truth |
 | Pembimbing minta uji beda nyata (ANOVA + Tukey) | Modul terintegrasi dengan interpretasi otomatis |
 | Lampiran tesis butuh laporan rapi per percobaan | Generator PDF satu klik |
@@ -60,202 +37,19 @@ research di lab, dashboard Next.js untuk visualisasi & demo sidang.
 
 ## Daftar Isi
 
-1. [Pilih Stack](#pilih-stack)
-2. [Stack Utama: Dashboard Next.js + Supabase](#stack-utama-dashboard-nextjs--supabase)
-3. [Stack Lawas: Streamlit + Google Sheets](#stack-lawas-streamlit--google-sheets)
-4. [Fitur Streamlit](#fitur-streamlit)
-5. [Mulai Cepat (Streamlit)](#mulai-cepat-streamlit)
-6. [Setup Google Sheets](#setup-google-sheets)
-7. [Auth Login](#auth-login)
-8. [Modul ANOVA + Tukey HSD](#modul-anova--tukey-hsd)
-9. [Export PDF Report](#export-pdf-report)
-10. [Deploy Streamlit Cloud](#deploy-ke-streamlit-community-cloud)
-11. [Anti Cold-Start](#anti-cold-start)
-12. [Responsive (Mobile-Friendly)](#responsive-mobile-friendly)
-13. [Rumus & Validasi Saintifik](#rumus--validasi-saintifik)
-14. [Struktur Folder Repo](#struktur-folder-repo)
-15. [Diagram & Visual Reference](docs/DIAGRAMS.md)
-16. [Troubleshooting](#troubleshooting)
-17. [Roadmap](#roadmap)
-
----
-
-## Pilih Stack
-
-Lo bingung mau pakai yang mana? Ikuti tabel keputusan ini:
-
-| Pertanyaan | Jawab YES → Pakai | Jawab NO |
-|---|---|---|
-| Mau visual professional kayak admin panel SaaS? | **Dashboard Next.js** | lanjut |
-| Butuh modul lengkap (sensor, ML, fitokimia, environment)? | **Dashboard Next.js** | lanjut |
-| Butuh database SQL beneran (relasi, query kompleks)? | **Dashboard Next.js** | lanjut |
-| Mau showcase platform di sidang/jurnal? | **Dashboard Next.js** | lanjut |
-| Cuma butuh input absorbansi & hitung IC50 cepat? | **Streamlit** | lanjut |
-| Asisten lab gak familiar dengan Vercel/Supabase? | **Streamlit** | lanjut |
-| Pakai Google Sheets sebagai dokumentasi tesis? | **Streamlit** | — |
-
-> **Rekomendasi default**: pakai **Dashboard Next.js** sebagai produk utama,
-> Streamlit sebagai tool internal lab.
-
-```mermaid
-flowchart LR
-    Lab[Lab: pengukuran absorbansi DPPH] --> S[Streamlit + GSheet<br/>quick input]
-    Lab --> D[Dashboard Next.js + Supabase<br/>showcase, analisis lengkap]
-    S -.-> Sheets[(Google Sheets)]
-    D -.-> Postgres[(Supabase Postgres)]
-
-    style D fill:#34A853,color:#fff
-    style S fill:#FF4B4B,color:#fff
-```
-
----
-
-## Stack Utama: Dashboard Next.js + Supabase
-
-Modern admin panel dengan **10 komponen visual** match mockup professional:
-KPI cards, monitoring real-time, donut fitokimia, scatter model prediksi,
-timeline notifikasi, dll. Backend Postgres via Supabase, deploy gratis ke
-Vercel.
-
-### Tech Stack
-
-| Layer | Tool |
-|---|---|
-| **Framework** | Next.js 15 (App Router) + React 19 + TypeScript |
-| **Styling** | Tailwind CSS 3 + shadcn/ui (Card, Badge, Button, Separator) |
-| **Charts** | Recharts (line, bar, pie/donut, scatter, composed) |
-| **Database** | Supabase (Postgres) — 10 tabel + 2 views |
-| **Icons** | Lucide React |
-| **Deploy** | Vercel (gratis, auto-deploy on git push) |
-
-### Quick Start (3 menit)
-
-```bash
-cd dashboard
-npm install
-cp .env.example .env.local
-# Isi .env.local dengan Supabase URL + anon key
-npm run dev
-# Buka http://localhost:3000
-```
-
-### Halaman Yang Sudah Jadi
-
-```mermaid
-graph LR
-    Home[Dashboard<br/>5 KPI + 4 chart + 4 panel]
-    Home --> DPPH[/dpph<br/>Card grid percobaan]
-    Home --> UAE[/uae<br/>Tabel sesi ekstraksi]
-    Home --> Fito[/fitokimia<br/>Donut komposisi]
-    Home --> Model[/model<br/>Metrik R2/RMSE/MAE]
-    Home --> TPC[/tpc<br/>Coming soon]
-    Home --> Data[/dataset<br/>Coming soon]
-    Home --> Lap[/laporan<br/>Coming soon]
-```
-
-### Database Schema (10 tabel + 2 views)
-
-| Tabel | Fungsi |
-|---|---|
-| `samples` | Master sampel daun salam |
-| `uae_sessions` | Sesi ekstraksi UAE + parameter proses |
-| `monitoring_logs` | Log sensor real-time per sesi (suhu/pH/amplitudo/daya) |
-| `dpph_experiments` | Header percobaan DPPH |
-| `dpph_measurements` | Detail absorbansi per konsentrasi (long-format) |
-| `tpc_measurements` | Total Phenolic Content (Folin-Ciocalteu) |
-| `phytochemistry` | Komposisi fitokimia ekstrak |
-| `model_predictions` | Output regresi/ML (R²/RMSE/MAE/MSE) |
-| `environmental_impact` | Konsumsi energi, emisi CO₂, green chemistry score |
-| `activity_log` | Audit trail aktivitas sistem |
-| `v_dashboard_kpi` (view) | Agregat 5 KPI cards |
-| `v_riwayat_ekstraksi` (view) | Tabel riwayat dengan join DPPH |
-
-### Setup Supabase (5 menit)
-
-1. Daftar di <https://supabase.com> → **New project** (region Singapore terdekat)
-2. Tunggu provisioning ~2 menit
-3. Tab **SQL Editor** → paste isi `dashboard/supabase/migrations/001_initial_schema.sql` → **Run**
-4. New query → paste `dashboard/supabase/migrations/002_seed_data.sql` → **Run** (data demo)
-5. Tab **Settings → API** → copy URL + anon key → paste ke `dashboard/.env.local`
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-### Deploy ke Vercel
-
-```bash
-cd dashboard
-npm i -g vercel
-vercel              # ikuti prompt: root = current dir
-# Add env vars di Vercel dashboard:
-#   NEXT_PUBLIC_SUPABASE_URL
-#   NEXT_PUBLIC_SUPABASE_ANON_KEY
-#   SUPABASE_SERVICE_ROLE_KEY
-vercel --prod       # promote ke production
-```
-
-Live URL: `https://your-app.vercel.app`. Auto-redeploy setiap `git push`
-ke main branch.
-
-### Struktur Dashboard
-
-```text
-dashboard/
-├── app/
-│   ├── layout.tsx                # Root HTML
-│   ├── globals.css               # Tailwind + theme variables
-│   └── (dashboard)/              # Route group (sidebar layout)
-│       ├── layout.tsx            # Shell: Sidebar + Topbar + Footer
-│       ├── page.tsx              # Dashboard utama match mockup
-│       ├── dpph/page.tsx         # Aktivitas Antioksidan
-│       ├── uae/page.tsx          # Parameter Proses
-│       ├── fitokimia/page.tsx    # Komposisi Fitokimia
-│       ├── tpc/page.tsx          # Total Fenolik
-│       ├── dataset/page.tsx      # Manajemen dataset
-│       ├── model/page.tsx        # Model prediksi
-│       └── laporan/page.tsx      # Laporan hasil
-├── components/
-│   ├── ui/                       # shadcn primitives (4 file)
-│   ├── layout/                   # Sidebar, Topbar, StatusPanel
-│   └── dashboard/                # 8 komponen dashboard match mockup
-├── lib/
-│   ├── utils.ts                  # cn(), formatNumber, classifyIC50
-│   └── supabase/                 # client.ts + server.ts
-├── types/database.ts             # TypeScript types semua tabel
-├── supabase/migrations/          # Schema SQL + seed data
-├── package.json
-├── tailwind.config.ts
-└── README.md                     # Setup detail dashboard
-```
-
-Detail lengkap: **[dashboard/README.md](dashboard/README.md)**.
-
----
-
-## Stack Lawas: Streamlit + Google Sheets
-
-Versi original yang dibuat duluan. Cocok untuk skenario **input data
-harian di lab** dengan friction rendah — tidak perlu install Node.js,
-gak perlu kelola database, semua data ke Google Sheets.
-
-### Mengapa Stack Streamlit Masih Relevan
-
-| Tantangan Riset | Solusi Streamlit |
-|---|---|
-| Hitungan manual % inhibisi & IC50 di Excel rawan typo | Input mentah → otomatis hitung dengan rumus tervalidasi |
-| Replikasi data antar laptop & lab | Google Sheets sebagai single source of truth |
-| Pembimbing minta uji beda nyata (ANOVA + Tukey) | Modul terintegrasi dengan interpretasi otomatis |
-| Lampiran tesis butuh laporan rapi per percobaan | Generator PDF satu klik |
-| Akses dari HP saat di lab | Layout responsif, sidebar otomatis collapse |
-| Streamlit Cloud auto-sleep setelah 7 hari | GitHub Actions ping setiap 6 jam |
-| Asisten lab gak nyaman buka admin panel kompleks | UI sederhana: form, tabel, chart |
-
-> **Note:** Streamlit & Dashboard Next.js bisa **berjalan paralel**.
-> Data Google Sheets bisa di-export dan di-import ke Supabase kapan saja
-> dengan SQL `INSERT INTO` atau via Supabase CSV import.
+1. [Fitur Streamlit](#fitur-streamlit)
+2. [Mulai Cepat (Streamlit)](#mulai-cepat-streamlit)
+3. [Setup Google Sheets](#setup-google-sheets)
+4. [Auth Login](#auth-login)
+5. [Modul ANOVA + Tukey HSD](#modul-anova--tukey-hsd)
+6. [Export PDF Report](#export-pdf-report)
+7. [Deploy ke Streamlit Community Cloud](#deploy-ke-streamlit-community-cloud)
+8. [Anti Cold-Start](#anti-cold-start)
+9. [Responsive (Mobile-Friendly)](#responsive-mobile-friendly)
+10. [Rumus & Validasi Saintifik](#rumus--validasi-saintifik)
+11. [Struktur Folder Repo](#struktur-folder-repo)
+12. [Troubleshooting](#troubleshooting)
+13. [Roadmap](#roadmap)
 
 ---
 
@@ -270,7 +64,6 @@ gak perlu kelola database, semua data ke Google Sheets.
 | **Auth login** | Passcode sederhana via `secrets.toml` untuk gate write operations (timing-attack safe via `hmac.compare_digest`) |
 | **CRUD lengkap** | Lihat, edit massal, dan hapus per percobaan langsung dari worksheet |
 | **Hybrid storage** | Auto-pilih: Google Sheets jika `secrets.toml` ter-set, fallback ke CSV lokal untuk development |
-| **Multi-modul** | DPPH (utama) + UAE (parameter ekstraksi) + TPC (total fenolik) sebagai placeholder siap-isi |
 | **Responsive** | Layout otomatis stack di mobile, sidebar collapse, grafik scroll horizontal |
 | **Performance** | Cache 60 detik untuk read, lazy import Plotly, fastReruns, file-watcher off di production |
 | **Anti cold-start** | Workflow GitHub Actions ping app tiap 6 jam |
@@ -296,40 +89,15 @@ pip install -r requirements.txt
 streamlit run Home.py
 ```
 
-Buka <http://localhost:8501>. Tanpa konfigurasi, app jalan dalam **mode CSV
-lokal** (data ke `app/data/*.csv`). Untuk pindah ke Google Sheets, ikuti
-section [Setup Google Sheets](#setup-google-sheets) di bawah.
+Buka http://localhost:8501. Tanpa konfigurasi, app jalan dalam **mode CSV lokal** (data ke `app/data/*.csv`). Untuk pindah ke Google Sheets, ikuti section [Setup Google Sheets](#setup-google-sheets) di bawah.
 
 > Untuk panduan langkah demi langkah versi non-teknis, baca [PANDUAN.md](PANDUAN.md).
-
-### Alur Kerja Riset
-
-```mermaid
-flowchart LR
-    A[Lab: Spektrofotometer] --> B[Streamlit: Input DPPH]
-    B --> C[Auto-hitung<br/>%inhibisi & IC50]
-    C --> D[(Google Sheets)]
-    D --> E[Visualisasi]
-    D --> F[ANOVA]
-    D --> G[PDF Report]
-
-    style D fill:#34A853,color:#fff
-```
-
-Diagram lengkap (8 jenis): [docs/DIAGRAMS.md](docs/DIAGRAMS.md).
 
 ---
 
 ## Setup Google Sheets
 
-Total ~10 menit, satu kali setup. Hasil akhir: aplikasi terhubung ke
-spreadsheet yang dapat diakses multi-device.
-
-```mermaid
-flowchart LR
-    A[1. Upload<br/>template] --> B[2. Buat<br/>Service Account] --> C[3. Share<br/>sheet] --> D[4. Edit<br/>secrets.toml] --> E[5. Verify]
-    style E fill:#34A853,color:#fff
-```
+Total ~10 menit, satu kali setup. Hasil akhir: aplikasi terhubung ke spreadsheet yang dapat diakses multi-device.
 
 ### Langkah 1 — Upload Template
 
@@ -345,142 +113,27 @@ flowchart LR
 
 **Cara upload:**
 
-1. Buka <https://sheets.google.com> → klik **Blank** (icon `+` plus warna-warni)
+1. Buka https://sheets.google.com → klik **Blank**
 2. Menu **File → Import**
 3. Pilih tab **Upload** → drag-drop file `template_gsheet.xlsx`
 4. Di dialog "Import file": pilih **Replace spreadsheet** → klik **Import data**
 5. Tunggu 5–10 detik. Spreadsheet langsung terisi 5 tab.
-6. Rename spreadsheet (default "Untitled") jadi mis. `Tesis - Data Antioksidan`
-7. Salin URL spreadsheet — bagian `https://docs.google.com/spreadsheets/d/`**`SPREADSHEET_ID`**`/edit/...`. Catat `SPREADSHEET_ID`.
-
-> **Tips KALKULATOR:** kalau lo cuma mau quick-check IC50 tanpa buka aplikasi,
-> buka tab `KALKULATOR`. Edit cell **kuning** (absorbansi & metadata),
-> hasil di cell **hijau/kuning-tua** (IC50, kategori, regresi) auto-update.
-> Cocok buat asisten lab yang gak suka buka Streamlit.
+6. Rename spreadsheet (mis. `Tesis - Data Antioksidan`)
+7. Salin URL spreadsheet — catat `SPREADSHEET_ID`.
 
 ### Langkah 2 — Service Account di Google Cloud
 
-> **Apa itu Service Account?** Akun robot khusus untuk app — punya email
-> sendiri (contoh: `streamlit-bot@xxx.iam.gserviceaccount.com`), bisa diberi
-> akses spesifik ke Google Sheet. Aman karena tidak butuh password user.
-
-```mermaid
-sequenceDiagram
-    actor U as Lo
-    participant GCP as Google Cloud Console
-    participant SA as Service Account
-    U->>GCP: 1. Create Project
-    U->>GCP: 2. Enable Sheets API + Drive API
-    U->>GCP: 3. Create Service Account "streamlit-bot"
-    U->>GCP: 4. Add Key (JSON)
-    GCP-->>U: credentials.json (download)
-    Note over U: Simpan file JSON,<br/>jangan upload ke GitHub
-```
-
-**Step by step (5 menit):**
-
-| # | Aksi | Lokasi |
-|---|---|---|
-| 1 | Buka **<https://console.cloud.google.com>** | Browser |
-| 2 | Klik dropdown project (atas-kiri, dekat logo Google Cloud) → **NEW PROJECT** | Top bar |
-| 3 | Project name: `tesis-platform` (atau bebas) → **CREATE** | Modal |
-| 4 | Pastikan project aktif (cek di top bar — nama project harus muncul) | Top bar |
-| 5 | Hamburger menu (☰) → **APIs & Services → Library** | Sidebar |
-| 6 | Search **"Google Sheets API"** → klik hasilnya → **ENABLE** | Page |
-| 7 | Klik panah back → search **"Google Drive API"** → klik → **ENABLE** | Page |
-| 8 | Hamburger menu → **APIs & Services → Credentials** | Sidebar |
-| 9 | Klik **+ CREATE CREDENTIALS** (atas) → pilih **Service account** | Top bar |
-| 10 | Service account name: `streamlit-bot` → **CREATE AND CONTINUE** | Form |
-| 11 | Skip "Grant this service account access" → **CONTINUE → DONE** | Form |
-| 12 | Di tabel "Service Accounts", klik email service account yang baru dibuat | Table |
-| 13 | Tab **KEYS** → **ADD KEY → Create new key → JSON → CREATE** | Tab |
-| 14 | File `xxx-yyy-zzz.json` ter-download otomatis | Browser download |
-
-> ⚠️ **Hati-hati:**
-> - File JSON ini = kunci akses ke sheet. **Jangan upload ke GitHub publik**.
-> - Sudah otomatis di-`.gitignore` di repo ini (`*.json`).
-> - Kalau lo lupa simpan, tinggal generate ulang di langkah 13.
+Buat service account dan download key JSON (jangan upload ke GitHub publik). Enable Google Sheets API + Google Drive API.
 
 ### Langkah 3 — Share Sheet ke Service Account
 
-Service account harus diberi izin untuk akses sheet lo.
-
-1. Buka file JSON yang barusan di-download (pakai Notepad/VS Code)
-2. Cari nilai `"client_email"` — copy email-nya, mis:
-   `streamlit-bot@tesis-platform.iam.gserviceaccount.com`
-3. Buka spreadsheet Google Sheet (yang dari Langkah 1)
-4. Klik tombol **Share** (kanan atas, biru)
-5. Paste email service account → **Set akses: Editor** (bukan Viewer)
-6. **Uncheck** "Notify people" (gak perlu kirim email)
-7. Klik **Share**
-
-> **Cek sukses:** klik dropdown share lagi — service account email harus muncul
-> dengan label "Editor".
+Share spreadsheet ke `client_email` dari file JSON (akses Editor).
 
 ### Langkah 4 — Konfigurasi `secrets.toml`
 
-Buat file dari template:
+Copy template `app/.streamlit/secrets.toml.example` → `app/.streamlit/secrets.toml` dan isi field service account + URL spreadsheet.
 
-```powershell
-cd app
-Copy-Item .streamlit\secrets.toml.example .streamlit\secrets.toml
-notepad .streamlit\secrets.toml
-```
-
-Pemetaan field JSON → `secrets.toml`:
-
-| Field di file JSON | Pasangkan ke `secrets.toml` |
-|---|---|
-| `"type"` | `type = "service_account"` |
-| `"project_id"` | `project_id = "..."` |
-| `"private_key_id"` | `private_key_id = "..."` |
-| `"private_key"` | `private_key = "-----BEGIN ... -----END PRIVATE KEY-----\n"` |
-| `"client_email"` | `client_email = "..."` |
-| `"client_id"` | `client_id = "..."` |
-| `"auth_uri"` | `auth_uri = "..."` |
-| `"token_uri"` | `token_uri = "..."` |
-| `"auth_provider_x509_cert_url"` | sama |
-| `"client_x509_cert_url"` | sama |
-
-Plus tambahan **untuk spreadsheet**:
-
-```toml
-[connections.gsheets]
-spreadsheet = "https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit"
-worksheet  = "DPPH"
-
-type = "service_account"
-project_id = "tesis-platform"
-private_key_id = "abc123..."
-private_key = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkq...\n-----END PRIVATE KEY-----\n"
-client_email = "streamlit-bot@tesis-platform.iam.gserviceaccount.com"
-client_id = "1234567890..."
-auth_uri = "https://accounts.google.com/o/oauth2/auth"
-token_uri = "https://oauth2.googleapis.com/token"
-auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
-client_x509_cert_url = "https://www.googleapis.com/robot/v1/metadata/x509/streamlit-bot%40tesis-platform.iam.gserviceaccount.com"
-```
-
-> **Penting tentang `private_key`:**
->
-> Field ini paling sering bikin error. Aturan:
-> - Salin **persis** dari JSON termasuk karakter `\n` (backslash + n)
-> - Tetap dalam **satu baris** dengan tanda kutip ganda `"..."`
-> - **Jangan** ganti `\n` dengan baris baru asli (tekan Enter)
-> - **Jangan** pakai single quote `'...'`
->
-> Contoh **benar**:
-> ```toml
-> private_key = "-----BEGIN PRIVATE KEY-----\nMIIE...\n-----END PRIVATE KEY-----\n"
-> ```
-> Contoh **salah** (akan error):
-> ```toml
-> private_key = """
-> -----BEGIN PRIVATE KEY-----
-> MIIE...
-> -----END PRIVATE KEY-----
-> """
-> ```
+> PENTING: Field `private_key` harus disalin persis dari JSON dengan karakter `\n` literal dan tetap dalam satu baris antara tanda kutip ganda.
 
 ### Langkah 5 — Verifikasi
 
@@ -497,7 +150,7 @@ Banner di Home harus berubah jadi: **"Backend penyimpanan: Google Sheets (terhub
 Gate write operation (input/edit/hapus) dengan passcode sederhana.
 
 ```toml
-# .streamlit/secrets.toml
+# app/.streamlit/secrets.toml
 [auth]
 enabled = true
 passcode = "ganti-passcode-rahasia-lo"
@@ -511,31 +164,11 @@ Behaviour:
 - Form login muncul di sidebar, validasi pakai `hmac.compare_digest`
 - Hapus section `[auth]` atau set `enabled = false` untuk menonaktifkan
 
-```mermaid
-flowchart LR
-    A[User] --> B{auth aktif?}
-    B -->|Tidak| F[Bisa input bebas]
-    B -->|Ya| C{Sudah login?}
-    C -->|Ya| F
-    C -->|Tidak| D[Form passcode]
-    D --> E{Cocok?}
-    E -->|Ya| F
-    E -->|Tidak| D
-    style F fill:#C8E6C9
-```
-
 ---
 
 ## Modul ANOVA + Tukey HSD
 
-Halaman **Analisis ANOVA** (`pages/6_Analisis_ANOVA.py`) untuk uji beda
-nyata secara statistik (umumnya diminta pembimbing tesis).
-
-| Metrik | Variabel pengelompok |
-|---|---|
-| IC50 (ppm) per percobaan | Waktu inkubasi (menit) |
-| % Inhibisi pada konsentrasi tertentu (per replikasi) | Metode ekstraksi |
-| | Sampel |
+Halaman **Analisis ANOVA** (`pages/6_Analisis_ANOVA.py`) untuk uji beda nyata secara statistik.
 
 Pipeline:
 
@@ -544,12 +177,6 @@ Pipeline:
 3. **ANOVA satu arah** (`scipy.stats.f_oneway`) — F-statistic, p-value, df, interpretasi otomatis
 4. **Post-hoc Tukey HSD** (`statsmodels.stats.multicomp.pairwise_tukeyhsd`) — pasangan mana yang berbeda nyata
 5. **Download CSV** hasil lengkap (deskriptif + ANOVA + Tukey)
-
-Contoh interpretasi (auto-generate):
-
-> Terdapat perbedaan yang signifikan secara statistik antar grup
-> (p = 0.0003 < 0.05). Lanjut ke uji post-hoc Tukey HSD untuk
-> mengetahui pasangan grup mana yang berbeda.
 
 ---
 
@@ -572,20 +199,8 @@ Isi (A4, 2 halaman):
 
 ## Deploy ke Streamlit Community Cloud
 
-```mermaid
-flowchart LR
-    A[Push ke GitHub] --> B[share.streamlit.io]
-    B --> C[New app]
-    C --> D[Pilih repo + branch]
-    D --> E[Main file: app/Home.py]
-    E --> F[Advanced: paste secrets.toml]
-    F --> G[Deploy]
-    G --> H[Live URL]
-    style G fill:#34A853,color:#fff
-```
-
 1. Push repo ke GitHub. Pastikan `secrets.toml` **TIDAK** ke-push (sudah di `.gitignore`).
-2. Buka <https://share.streamlit.io> → **New app**
+2. Buka https://share.streamlit.io → **New app**
 3. Konfigurasi:
    - Repository: `username/repo`
    - Branch: `main`
@@ -597,42 +212,12 @@ flowchart LR
 
 ## Anti Cold-Start
 
-Streamlit Community Cloud men-sleep app yang tidak diakses ~7 hari. Akses
-pertama setelah sleep butuh 30–60 detik. Tiga lapis pertahanan:
+Streamlit Community Cloud men-sleep app yang tidak diakses ~7 hari. Solusi: GitHub Actions cron yang men-ping app tiap 6 jam (workflow `/.github/workflows/keep-alive.yml`).
 
-```mermaid
-flowchart TB
-    subgraph L1[Layer 1: Caching]
-        A1[Read DPPH/UAE/TPC] --> A2[@st.cache_data ttl=60s]
-    end
-    subgraph L2[Layer 2: Config]
-        B1[runOnSave=false]
-        B2[fileWatcherType=none]
-        B3[fastReruns=true]
-        B4[Lazy import Plotly]
-    end
-    subgraph L3[Layer 3: Keep-Alive]
-        C1[GitHub Actions cron] -->|6 jam| C2[ping /_stcore/health]
-    end
-    L1 --> Warm
-    L2 --> Warm
-    L3 --> Warm
-    Warm[App selalu warm]
-    style Warm fill:#C8E6C9
-```
-
-**Aktifkan keep-alive (1 menit):**
-
-1. Push repo ke GitHub
-2. **Settings → Secrets → Actions → New repository secret**:
-   - Name: `STREAMLIT_APP_URL`
-   - Value: `https://your-app.streamlit.app`
-3. Selesai. Workflow ping otomatis tiap 6 jam (lihat tab **Actions**).
-
-**Test manual:**
+Test manual:
 
 ```powershell
-python app\keep_alive.py https://your-app.streamlit.app
+python app/keep_alive.py https://your-app.streamlit.app
 # [WARM] https://... (0.42s) HTTP 200: ok
 ```
 
@@ -676,63 +261,13 @@ IC50:
 | 150 – 200 | Lemah |
 | > 200 | Sangat lemah |
 
-**Validasi terhadap data referensi (lab spreadsheet):**
-
-| Metrik | Aplikasi | Referensi | Match |
-|---|---:|---:|:---:|
-| inhib_1 @ 5 mnt, 20 ppm | 29.6852 | 29.6852 | ✓ |
-| inhib_2 @ 5 mnt, 20 ppm | 30.6428 | 30.6428 | ✓ |
-| inhib_3 @ 5 mnt, 20 ppm | 30.7004 | 30.7004 | ✓ |
-| **IC50 @ 5 mnt** | **47.114 ppm** | 47.11 ppm | ✓ |
-| R-squared | 0.9913 | 0.9913 | ✓ |
-
-Verifikasi ulang kapan saja:
-
-```powershell
-python app\tests\verify_with_excel.py
-```
-
 ---
 
 ## Struktur Folder Repo
 
-Repo ini berisi **2 stack paralel** plus dokumentasi & template.
-
 ```text
 .
-├── dashboard/                          # ⭐ STACK UTAMA: Next.js + Supabase
-│   ├── app/                            # Next.js App Router
-│   │   ├── globals.css
-│   │   ├── layout.tsx                  # Root HTML
-│   │   └── (dashboard)/                # Route group dengan sidebar
-│   │       ├── layout.tsx              # Shell (Sidebar + Topbar)
-│   │       ├── page.tsx                # Dashboard utama match mockup
-│   │       ├── dpph/page.tsx
-│   │       ├── uae/page.tsx
-│   │       ├── fitokimia/page.tsx
-│   │       ├── tpc/page.tsx
-│   │       ├── dataset/page.tsx
-│   │       ├── model/page.tsx
-│   │       └── laporan/page.tsx
-│   ├── components/
-│   │   ├── ui/                         # shadcn primitives
-│   │   ├── layout/                     # Sidebar, Topbar, StatusPanel
-│   │   └── dashboard/                  # 8 komponen dashboard
-│   ├── lib/
-│   │   ├── utils.ts
-│   │   └── supabase/                   # client.ts + server.ts
-│   ├── types/database.ts
-│   ├── supabase/migrations/
-│   │   ├── 001_initial_schema.sql      # 10 tabel + 2 views + RLS
-│   │   └── 002_seed_data.sql           # Data demo realistic
-│   ├── package.json
-│   ├── tailwind.config.ts
-│   ├── tsconfig.json
-│   ├── components.json
-│   ├── .env.example
-│   └── README.md                       # Setup detail dashboard
-│
-├── app/                                # STACK LAWAS: Streamlit + GSheet
+├── app/                                # STACK: Streamlit + Google Sheets
 │   ├── Home.py                         # Landing + dashboard
 │   ├── pages/
 │   │   ├── 1_Input_DPPH.py
@@ -764,22 +299,12 @@ Repo ini berisi **2 stack paralel** plus dokumentasi & template.
 │   └── keep-alive.yml                  # Cron 6 jam (Streamlit Cloud)
 │
 ├── docs/
-│   └── DIAGRAMS.md                     # 10 diagram Mermaid
+│   └── DIAGRAMS.md                     # Diagram Mermaid
 │
 ├── template_gsheet.xlsx                # Template upload Google Sheets (Streamlit)
-├── PANDUAN.md                          # Panduan orang awam
+├── PANDUAN.md                          # Panduan untuk orang awam
 └── README.md                           # File ini
 ```
-
-### Quick Reference Tiap Folder
-
-| Folder | Untuk siapa | Setup |
-|---|---|---|
-| `dashboard/` | Mau pakai Next.js + Supabase | [dashboard/README.md](dashboard/README.md) |
-| `app/` | Mau pakai Streamlit + GSheet | [Quick Start Streamlit](#mulai-cepat-streamlit) |
-| `docs/` | Lihat diagram alur | [docs/DIAGRAMS.md](docs/DIAGRAMS.md) |
-| `template_gsheet.xlsx` | Setup Google Sheet | [Setup Google Sheets](#setup-google-sheets) |
-| `PANDUAN.md` | Panduan untuk orang awam | [PANDUAN.md](PANDUAN.md) |
 
 ---
 
@@ -807,7 +332,7 @@ Repo ini berisi **2 stack paralel** plus dokumentasi & template.
 <details>
 <summary><b>Error <code>private_key</code> malformed</b></summary>
 
-- Saat menyalin dari JSON, pertahankan karakter `\n` literal (jangan ganti dengan baris baru)
+- Saat menyalin dari JSON, pertahankan karakter `\\n` literal (jangan ganti dengan baris baru)
 - Pastikan dikutip ganda `"..."`, bukan single quote
 - Di Streamlit Cloud "Secrets", tempel format TOML asli (sama dengan file lokal)
 
@@ -867,48 +392,22 @@ gantt
     DPPH + Hybrid storage      :done, 2026-01-01, 2026-01-15
     ANOVA + PDF + Auth         :done, 2026-01-13, 2026-01-15
 
-    section Dashboard Next.js (Done)
-    Schema Supabase + seed     :done, 2026-01-16, 2026-01-17
-    Layout shell + 8 komponen  :done, 2026-01-17, 2026-01-18
-    Halaman utama match mockup :done, 2026-01-18, 2026-01-19
-
     section Fase 2 (Aktif)
-    CRUD form input dashboard  :active, 2026-02-01, 21d
-    Auth Supabase + RLS policy :2026-02-15, 14d
-    Realtime sensor monitoring :2026-03-01, 21d
-
-    section Fase 3
-    Modul UAE optimasi (RSM)   :2026-03-15, 30d
+    Modul UAE optimasi (RSM)   :active, 2026-03-15, 30d
     Modul TPC lengkap          :2026-04-01, 30d
     Multi-user + role          :2026-04-15, 21d
 
-    section Fase 4
+    section Fase 3
     Export PDF dari dashboard  :2026-05-01, 14d
     ANOVA page di dashboard    :2026-05-10, 14d
     Audit trail UI             :2026-05-20, 14d
-    Dashboard publik (read-only) :2026-06-01, 14d
 ```
 
 ---
 
 ## Lisensi & Atribusi
 
-Platform akademik untuk keperluan tesis Magister Studi Lingkungan UNTIRTA.
-Library third-party tunduk pada lisensi masing-masing.
-
-### Stack Dashboard Next.js
-
-[Next.js](https://nextjs.org/) ·
-[React](https://react.dev/) ·
-[TypeScript](https://www.typescriptlang.org/) ·
-[Tailwind CSS](https://tailwindcss.com/) ·
-[shadcn/ui](https://ui.shadcn.com/) ·
-[Recharts](https://recharts.org/) ·
-[Supabase](https://supabase.com/) ·
-[Lucide Icons](https://lucide.dev/) ·
-[Vercel](https://vercel.com/)
-
-### Stack Streamlit
+Platform akademik untuk keperluan tesis Magister Studi Lingkungan UNTIRTA. Library third-party tunduk pada lisensi masing-masing.
 
 [Streamlit](https://streamlit.io/) ·
 [pandas](https://pandas.pydata.org/) ·
@@ -925,7 +424,6 @@ Library third-party tunduk pada lisensi masing-masing.
 
 **Made for Magister Studi Lingkungan, Pascasarjana UNTIRTA**
 
-[Dashboard](dashboard/README.md) ·
 [Streamlit Quick Start](#mulai-cepat-streamlit) ·
 [Diagram](docs/DIAGRAMS.md) ·
 [Panduan Awam](PANDUAN.md)
